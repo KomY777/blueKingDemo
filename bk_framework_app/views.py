@@ -35,3 +35,7 @@ def contact(request):
     联系页
     """
     return render(request, "bk_framework_app/contact.html")
+
+
+def userInfo(request):
+    return render(request, "bk_framework_app/userInfo.html")

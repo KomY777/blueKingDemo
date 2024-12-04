@@ -37,7 +37,7 @@ INSTALLED_APPS += (
     "bk_framework_app",
     "rest_framework",
     "drf_yasg",
-    
+    "bk_framework_api.student"
 )
 
 # 这里是默认的中间件，大部分情况下，不需要改动
@@ -72,7 +72,7 @@ MIDDLEWARE += ()  # noqa
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 
 # 所有环境的日志级别可以在这里配置
-# LOG_LEVEL = 'INFO'
+LOG_LEVEL = 'INFO'
 
 # 静态资源文件(js,css等）在APP上线更新后, 由于浏览器有缓存,
 # 可能会造成没更新的情况. 所以在引用静态资源的地方，都把这个加上
@@ -86,7 +86,7 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 # worker: python manage.py celery worker -l info
 # beat: python manage.py celery beat -l info
 # 不使用时，请修改为 False，并删除项目目录下的 Procfile 文件中 celery 配置
-IS_USE_CELERY = False
+IS_USE_CELERY = True
 
 # 前后端分离开发配置开关，设置为True时dev和stag环境会自动加载允许跨域的相关选项
 FRONTEND_BACKEND_SEPARATION = False
@@ -95,7 +95,9 @@ FRONTEND_BACKEND_SEPARATION = False
 CELERYD_CONCURRENCY = os.getenv("BK_CELERYD_CONCURRENCY", 2)
 
 # CELERY 配置，申明任务的文件路径，即包含有 @task 装饰器的函数文件
-CELERY_IMPORTS = ()
+CELERY_IMPORTS = (
+    'bk_framework_api.tasks',
+)
 
 # log level setting
 LOG_LEVEL = "INFO"
@@ -128,7 +130,7 @@ LANGUAGES = (
     ("en", u"English"),
     ("zh-hans", u"简体中文"),
 )
-
+ALLOWED_HOSTS = ['*']
 """
 以下为框架代码 请勿修改
 """

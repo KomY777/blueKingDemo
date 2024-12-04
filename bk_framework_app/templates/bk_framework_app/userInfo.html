@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block head %}
+	<title>{% trans "蓝鲸开发框架" %}</title>
+	{{ block.super }}
+{% endblock %}
+
+{% block content %}
+<div class="page_index">
+<button onclick="sendMsg()"></button>
+	<div class="show-userinfo">
+        
+    </div>
+</div>
+<script>
+function sendMsg(){
+    doAjaxSubmit()
+}
+
+</script>
+{% endblock %}
+{% block footerline %}
+    <hr class="guide-cutting-line">
+{% endblock %}

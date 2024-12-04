@@ -10,15 +10,18 @@ Unless required by applicable law or agreed to in writing, software distributed 
 an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
+import logging
 
 from django.contrib.auth import get_user_model
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet, ViewSet
 
+from blueking.component.shortcuts import get_client_by_request
 from .serializers import UserSerializer
+from .tasks import base_task
 
-
+logger = logging.getLogger("app")
 class UserViewSet(ReadOnlyModelViewSet):
     """
     用户信息API
@@ -26,6 +29,12 @@ class UserViewSet(ReadOnlyModelViewSet):
 
     queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
+
+    @action(detail=False, methods=["get"],url_path="user_detail")
+    def get_current_user(self,request):
+        client = get_client_by_request(request)
+        current_user = client.bk_login.get_user()
+        return Response({'user':current_user})
 
 
 class HealthzViewSet(ViewSet):
@@ -46,3 +55,15 @@ class HealthzViewSet(ViewSet):
         应用ping 接口
         """
         return Response("pong")
+
+
+@api_view(['GET'])
+def get_user(request):
+    client = get_client_by_request(request)
+    # current_user = client.bk_login.get_user()
+    current_user = client.usermanage.list_users()
+    logger.info(current_user)
+    base_task.delay()
+    print('base_task end')
+    return Response(current_user)
+

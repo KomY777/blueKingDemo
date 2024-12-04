@@ -10,13 +10,14 @@ Unless required by applicable law or agreed to in writing, software distributed 
 an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
 specific language governing permissions and limitations under the License.
 """
-
+from django.conf.urls import url
 from django.urls import include, re_path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import routers
 
 from . import views
+from .student.views import StudentViewSet
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -29,6 +30,7 @@ schema_view = get_schema_view(
 router = routers.SimpleRouter()
 router.register(r"", views.HealthzViewSet, basename="healthz")
 router.register(r"user", views.UserViewSet, basename="user")
+router.register(r'students', StudentViewSet,basename='students')
 
 urlpatterns = [
     re_path(
@@ -43,4 +45,6 @@ urlpatterns = [
     ),
     re_path(r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
     re_path(r"", include(router.urls)),
+
+    url(r"userInfo/",views.get_user, name="userInfo"),
 ]

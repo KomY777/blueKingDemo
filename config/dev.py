@@ -14,7 +14,6 @@ from config import RUN_VER
 from config.default import FRONTEND_BACKEND_SEPARATION
 from blueapps.conf.validators import EnvValidator
 
-
 EnvValidator(RUN_VER).validate()
 
 if RUN_VER == "open":
@@ -45,13 +44,13 @@ DEBUG = True
 
 # 本地开发数据库设置
 # USE FOLLOWING SQL TO CREATE THE DATABASE NAMED APP_CODE
-# SQL: CREATE DATABASE `{{ app_code }}` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; # noqa: E501
+# SQL: CREATE DATABASE `blueking1` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci; # noqa: E501
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": APP_CODE,  # noqa
         "USER": "root",
-        "PASSWORD": "",
+        "PASSWORD": "123456",
         "HOST": "localhost",
         "PORT": "3306",
     },
