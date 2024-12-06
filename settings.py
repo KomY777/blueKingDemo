@@ -21,7 +21,13 @@ import pymysql
 如有任何疑问，请联系 【蓝鲸助手】
 """
 pymysql.install_as_MySQLdb()
-
+APP_ID = APP_CODE = os.getenv("APP_ID", "")
+# 应用用于调用云 API 的 Secret
+APP_TOKEN = SECRET_KEY = os.getenv("APP_TOKEN", "")
+LOCAL_PLUGIN_API_USER = os.getenv("LOCAL_PLUGIN_API_USER", "2930738331Q")
+REMOTE_ACTION_APISERVER_URL = os.getenv(
+    "REMOTE_ACTION_APISERVER_URL", "http://localhost:8000"
+)
 # V3判断环境的环境变量为BKPAAS_ENVIRONMENT
 if "BKPAAS_ENVIRONMENT" in os.environ:
     ENVIRONMENT = os.getenv("BKPAAS_ENVIRONMENT", "dev")

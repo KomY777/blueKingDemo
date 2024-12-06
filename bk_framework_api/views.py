@@ -12,12 +12,13 @@ specific language governing permissions and limitations under the License.
 """
 import logging
 
+from canway_action.controller import local_controller
 from django.contrib.auth import get_user_model
 from rest_framework.decorators import action, api_view
 from rest_framework.response import Response
 from rest_framework.viewsets import ReadOnlyModelViewSet, ViewSet
-
-from blueking.component.shortcuts import get_client_by_request
+import settings
+from blueking.component.shortcuts import get_client_by_request, get_client_by_user
 from .serializers import UserSerializer
 from .tasks import base_task
 
@@ -30,11 +31,11 @@ class UserViewSet(ReadOnlyModelViewSet):
     queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
 
-    @action(detail=False, methods=["get"],url_path="user_detail")
-    def get_current_user(self,request):
+    @action(detail=False, methods=["get"], url_path="user_detail")
+    def get_current_user(self, request):
         client = get_client_by_request(request)
         current_user = client.bk_login.get_user()
-        return Response({'user':current_user})
+        return Response({'user': current_user})
 
 
 class HealthzViewSet(ViewSet):
@@ -60,10 +61,17 @@ class HealthzViewSet(ViewSet):
 @api_view(['GET'])
 def get_user(request):
     client = get_client_by_request(request)
+    client2 = get_client_by_user(settings.LOCAL_PLUGIN_API_USER)
     # current_user = client.bk_login.get_user()
-    current_user = client.usermanage.list_users()
+    token = request.COOKIES.get("bk_token", "")
+    current_user = client2.usermanage.list_users()
+    plugins = local_controller.get_all_action_plugins()
+    my_action = local_controller.get_action_plugin("simple_action", "")
+    input_schema, output_schema = my_action.schemas
+    # token = client2.common_args['bk_token']
+    result = my_action.execute(data={"token": token, "user": settings.LOCAL_PLUGIN_API_USER})
+
     logger.info(current_user)
     base_task.delay()
     print('base_task end')
     return Response(current_user)
-
