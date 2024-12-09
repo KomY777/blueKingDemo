@@ -20,7 +20,7 @@ from rest_framework.viewsets import ReadOnlyModelViewSet, ViewSet
 import settings
 from blueking.component.shortcuts import get_client_by_request, get_client_by_user
 from .serializers import UserSerializer
-from .tasks import base_task
+from .tasks import *
 
 logger = logging.getLogger("app")
 class UserViewSet(ReadOnlyModelViewSet):
@@ -64,14 +64,15 @@ def get_user(request):
     client2 = get_client_by_user(settings.LOCAL_PLUGIN_API_USER)
     # current_user = client.bk_login.get_user()
     token = request.COOKIES.get("bk_token", "")
+    # fail_task.delay()
+    show_request_detail.apply_async((1,2),link=[show_request_detail.s(16)],ignore_result=True)
     current_user = client2.usermanage.list_users()
     plugins = local_controller.get_all_action_plugins()
     my_action = local_controller.get_action_plugin("simple_action", "")
     input_schema, output_schema = my_action.schemas
     # token = client2.common_args['bk_token']
     result = my_action.execute(data={"token": token, "user": settings.LOCAL_PLUGIN_API_USER})
-
     logger.info(current_user)
     base_task.delay()
-    print('base_task end')
+    print(r'base_task end')
     return Response(current_user)
